@@ -20,12 +20,12 @@ cd ClearAcceptDemo\ClearAcceptDemo
 copy appsettings.example.json appsettings.json
 ``` 
 5. Edit appsettings.json and enter your credentials and platform ids in their placeholders:
-6. ![Demo Project](docs/images/appsettings.png)
-7. Use `dotnet run` in command line to start the demo server.
+![Demo Project](docs/images/appsettings.png)
+6. Use `dotnet run` in command line to start the demo server.
 ```shell
 dotnet run
 ```
-8. Open any Browser and navigate to https://localhost:44331/ to acces the demo page.
+7. Open any Browser and navigate to https://localhost:44331/ to acces the demo page.
 
 
 ## About the Demo Project

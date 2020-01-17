@@ -1,0 +1,13 @@
+﻿@model ProcessViewModel
+@{
+    ViewData["Title"] = "Demo Platform";
+}
+    <h10><a href="~/">start new payment</a></h10>
+<hr/>
+<h8>@Model.Result</h8>
+<hr />
+<textarea class="process-result" spellcheck="false">Request: 
+@Model.Request</textarea>
+<textarea class="process-result" spellcheck="false">Response: 
+@Model.Response</textarea>
+

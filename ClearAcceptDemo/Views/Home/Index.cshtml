@@ -1,0 +1,80 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Clear Accept Demo: Hosted Fields";
+}
+
+<div class="container-fluid">
+
+    <div>
+
+        <p class="title">Clear Accept Demo: Hosted Fields</p>
+
+        <div>
+
+            <form id="payment-form" method="post" asp-action="Process" asp-action-parameter="temporaryToken">
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <input type="text" class="form-control" value="John" name="firstname" placeholder="John" />
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <input type="text" class="form-control" value="Doe" name="lastname" placeholder="Doe" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <input type="text" class="form-control " value="London, Hamilton street" name="billing" placeholder="Billing address" />
+                    </div>
+                    <div class="col-md-12 form-group">
+                        <input type="text" class="form-control " name="shipping" value="New York, Deer street 23" placeholder="Shipping address" />
+                    </div>
+                </div>
+
+                <div id="payment" class="row">
+                    <div class="col-sm-4 d-flex col-md-6">
+                        <span class="card-label">Card:&nbsp;</span>
+                        <div>
+                            <div id="card-wrapper" class="card-field-wrapper"></div>
+                            <div id="card-errors" class="error-message"></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 d-flex col-md-4">
+                        <span class="card-label">Exp:&nbsp;</span>
+                        <div>
+                            <div id="expdate-wrapper" class="card-field-wrapper"></div>
+                            <div id="expdate-errors" class="error-message"></div>
+                        </div>
+                    </div>
+                    @if (Model.Channel != "MO")
+                    {
+                        <div id="cvv-holder" class="d-flex col-md-2">
+                            <span class="card-label">Cvv:&nbsp;</span>
+                            <div>
+                                <div id="cvv-wrapper" class="card-field-wrapper"></div>
+                                <div id="cvv-errors" class="error-message"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <input type="hidden" id="temporaryToken" name="temporaryToken" value="" />
+                <input type="hidden" id="requestId" name="requestId" value="@Model.PaymentRequestId" />
+                <button type="submit" class="btn btn-warning pay" id="pay">Pay now</button>
+
+            </form>
+        </div>
+        <div class="container-fluid">
+            <div class="test-buttons-container">
+                <button id="test-clear-output">Clear Output</button>
+            </div>
+            <textarea id="test-output" spellcheck="false">@Model.Error</textarea>
+        </div>
+
+
+    </div>
+</div>
+
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="@Model.PaymentsLibraryUrl"></script>
+<script>
+    initHostedFields("@Model.FieldToken");
+</script>

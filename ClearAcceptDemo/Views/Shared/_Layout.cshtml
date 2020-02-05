@@ -1,18 +1,32 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] | ClearCourse</title>
+    <title>@ViewData["Title"] - @ViewData["Subtitle"] | ClearCourse</title>
     <link rel="stylesheet" href="~/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="icon" type="image/png" href="/ico/favicon-32x32.png" sizes="32x32" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+
 <body>
+    <header>
+        <div class="h-100 header-title">
+            <div class="row h-100 text-center mx-5 mt-5 mt-lg-0">
+                <div class="col">
+                    <h1 class="display-4 mt-5">@ViewData["Title"]</h1>
+                    <h4 class="mb-5">@ViewData["Subtitle"]</h4>
+                </div>
+            </div>
+        </div>
+    </header>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 </body>
+
 </html>

@@ -1,47 +1,127 @@
-﻿using ClearAcceptDemo.Models;
-using ClearAcceptDemo.Services;
+﻿using ClearAcceptDemo.ClearAcceptApi.Models;
+using ClearAcceptDemo.ClearAcceptApi.Services;
+using ClearAcceptDemo.Models;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Text.Json;
 
 namespace ClearAcceptDemo.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly PaymentsService _paymentsService;
         private readonly SettingsModel _settings;
+        private readonly ServiceConfiguration _serviceConfiguration;
+        private readonly TransactService _service;
+        private readonly IMemoryCache _memoryCache;
 
-        public HomeController(IOptions<SettingsModel> settings)
+        public HomeController(IOptions<SettingsModel> settings, IMemoryCache memoryCache)
         {
-            _settings = settings.Value;
-            _paymentsService = new PaymentsService();
+            _memoryCache = memoryCache;
+            var customSettings = _memoryCache.Get<CustomSettingsViewModel>("customSettings");
+
+            _settings = new SettingsModel
+            {
+                AuthenticationEndpoint = settings.Value.AuthenticationEndpoint,
+                HostedFieldsUrl = settings.Value.HostedFieldsUrl,
+                TransactUrl = settings.Value.TransactUrl,
+                TransactCredentials = customSettings?.TransactCredentials ?? settings.Value.TransactCredentials,
+                PaymentRequest = customSettings?.PaymentRequest ?? settings.Value.PaymentRequest,
+                Identifiers = customSettings?.Identifiers ?? settings.Value.Identifiers
+            };
+
+            _serviceConfiguration = new ServiceConfiguration
+            {
+                Authentication = new AuthConfig
+                {
+                    URL = _settings.AuthenticationEndpoint,
+                    Credentials = _settings.TransactCredentials,
+                    Resource = "transact"
+                },
+                Host = _settings.TransactUrl,
+                PlatformId = _settings.Identifiers.PlatformId,
+                MerchantId = _settings.Identifiers.MerchantId
+            };
+            _service = new TransactService(_serviceConfiguration, memoryCache);
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var viewModel = new HomeViewModel();
+            var countries = _memoryCache.Get<List<IsoCountryModel>>("countries");
+            var currencies = _memoryCache.Get<List<CurrencyModel>>("currencies");
+            var viewModel = new HomeViewModel
+            {
+                IsoCountries = countries,
+                Currencies = currencies,
+                SavedCards = _memoryCache.Get<List<SavedCard>>("savedCards")?.Where(i => i.CustomerReference == _settings.PaymentRequest.PlatformReferences.CustomerReference)?.ToList() ?? new List<SavedCard>()
+            };
 
             try
             {
+                // Set Hosted Fields' script source
                 viewModel.PaymentsLibraryUrl = _settings.HostedFieldsUrl;
-                viewModel.Channel = _settings.Payment.Channel;
 
-                var accessToken =
-                    await _paymentsService.GetAccessToken(_settings.AuthenticationEndpoint,
-                        _settings.PaymentCredentials);
+                // Call POST /payment-requests
+                viewModel.PaymentRequest = _service.PostPaymentRequest(_settings.PaymentRequest);
 
-                var paymentRequest = await _paymentsService.CreatePaymentRequest(_settings.PaymentsEndpoint,
-                    accessToken, _settings.Payment, _settings.Platform);
-                var paymentRequestId = paymentRequest.PaymentRequestId;
+                // Call POST /field-tokens
+                var fieldToken = new FieldToken
+                {
+                    PaymentRequestId = viewModel.PaymentRequest.PaymentRequestId
+                };
+                viewModel.FieldToken = _service.PostFieldToken(fieldToken);
 
-                viewModel.PaymentRequestId = new HtmlString(paymentRequestId);
+                // Build and set Request/Response to be displayed in View
+                var requestString = "Create PaymentRequest" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "POST /payment-requests" +
+                    Environment.NewLine +
+                    $"Host: {_serviceConfiguration.Host}" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    JsonSerializer.Serialize(_settings.PaymentRequest, new JsonSerializerOptions { WriteIndented = true }) +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "----------------------------------------------" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Create FieldToken" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "POST /field-tokens" +
+                    Environment.NewLine +
+                    $"Host: {_serviceConfiguration.Host}" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    JsonSerializer.Serialize(fieldToken, new JsonSerializerOptions { WriteIndented = true });
+                var responseString = "Create PaymentRequest " +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "201 Created" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    JsonSerializer.Serialize(viewModel.PaymentRequest, new JsonSerializerOptions { WriteIndented = true }) +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "----------------------------------------------" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Create FieldToken" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "201 Created" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    JsonSerializer.Serialize(viewModel.FieldToken, new JsonSerializerOptions { WriteIndented = true });
 
-                var fieldToken = await _paymentsService.CreateFieldToken(_settings.FieldTokensEndpoint, paymentRequestId,
-                    accessToken, _settings.Platform);
-                viewModel.FieldToken = new HtmlString(fieldToken);
+                viewModel.Request = new HtmlString(requestString);
+                viewModel.Response = new HtmlString(responseString);
             }
             catch (Exception e)
             {
@@ -52,19 +132,47 @@ namespace ClearAcceptDemo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Process(string temporaryToken, string requestId)
+        public IActionResult Process(HomeViewModel model)
         {
             var viewModel = new ProcessViewModel();
+            var paymentRequest = model.PaymentRequest;
+
             try
             {
-                var accessToken =
-                    await _paymentsService.GetAccessToken(_settings.AuthenticationEndpoint,
-                        _settings.PaymentCredentials);
-                var result = await _paymentsService.ConfirmPaymentRequest(_settings.PaymentsEndpoint, accessToken,
-                     temporaryToken, requestId, _settings.Platform, _settings.Payment);
-                viewModel.Request = new HtmlString(result.Item1);
-                viewModel.Response = new HtmlString(result.Item2);
-                viewModel.Result = new HtmlString(_paymentsService.GetStatusFromPaymentRequest(result.Item2));
+                // Call POST /payment-requests/{paymentRequestId}/confirm
+                var result = _service.ConfirmPaymentRequest(paymentRequest);
+
+                // Store Permanent Token
+                var approvedAuth = result.Transactions?.FirstOrDefault(i => i.Type == "Authorisation" && (i.Status == "Approved" || i.Status == "Settled"));
+                if (approvedAuth != null && result.Token.Substring(0, 5) == "token")
+                {
+                    var savedCards = _memoryCache.Get<List<SavedCard>>("savedCards") ?? new List<SavedCard>();
+
+                    if (!savedCards.Any(i => i.Token == result.Token && i.CustomerReference == result.PlatformReferences.CustomerReference))
+                    {
+                        var newSavedCard = new SavedCard
+                        {
+                            Token = result.Token,
+                            CardNumber = approvedAuth.CardNumber,
+                            ExpiryDate = approvedAuth.ExpirationDate,
+                            CustomerReference = result.PlatformReferences.CustomerReference
+                        };
+                        savedCards.Add(newSavedCard);
+                        _memoryCache.Set("savedCards", savedCards);
+                    }
+                }
+
+                // Build and set Request/Response to be displayed in View
+                var requestString = $"{_serviceConfiguration.Host}/payment-requests/{paymentRequest.PaymentRequestId}/confirm" +
+                                    Environment.NewLine +
+                                    Environment.NewLine +
+                                    JsonSerializer.Serialize(paymentRequest, new JsonSerializerOptions { WriteIndented = true });
+                var responseString = JsonSerializer.Serialize(result,
+                                    new JsonSerializerOptions { WriteIndented = true });
+
+                viewModel.Request = new HtmlString(requestString);
+                viewModel.Response = new HtmlString(responseString);
+                viewModel.Result = new HtmlString($"STATUS: {result.Transactions?.FirstOrDefault(i => i.Type == "Authorisation")?.Status ?? "Error encountered."}");
             }
             catch (Exception e)
             {

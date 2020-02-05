@@ -1,80 +1,227 @@
 ﻿@model HomeViewModel
 @{
-    ViewData["Title"] = "Clear Accept Demo: Hosted Fields";
+ViewData["Title"] = "ClearAccept Demo";
+ViewData["Subtitle"] = "Hosted Fields";
+var amount = Model.PaymentRequest?.Amount != null ? (Model.PaymentRequest.Amount / 100m).ToString("#,##0.00") : null;
+var title = Model.PaymentRequest?.Channel == "ECOM" ? "Checkout" : "Virtual Terminal";
+var submit = Model.PaymentRequest?.Channel == "ECOM" ? "Pay Now" : "Process";
 }
 
-<div class="container-fluid">
-
-    <div>
-
-        <p class="title">Clear Accept Demo: Hosted Fields</p>
-
-        <div>
-
-            <form id="payment-form" method="post" asp-action="Process" asp-action-parameter="temporaryToken">
-
-                <div class="row">
-                    <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" value="John" name="firstname" placeholder="John" />
-                    </div>
-                    <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" value="Doe" name="lastname" placeholder="Doe" />
-                    </div>
+<div class="container-fluid form-container">
+    <div class="row mt-3 ml-1">
+        <div class="form-group col mb-0 text-left">
+            <a href="~/CustomSettings"><i class="fa fa-cog" style="color:darkgray"></i></a>
+        </div>
+        <div class="form-group col mb-0 text-right">
+            <label class="form-check form-check-inline">
+                <span class="form-check-label mr-2">
+                    <small>Step Through</small>
+                </span>
+                <input type="checkbox" class="form-check-input" id="step-through">
+            </label>
+        </div>
+    </div>
+    <form id="payment-form" method="post" asp-action="Process">
+        <div class="card mb-5 shadow-sm">
+            <div class="card-body p-5">
+                @if(title == "Checkout") {
+                <div class="col">
+                    <label><strong>Total Cost: @(Model.PaymentRequest?.Currency) @amount</strong></label>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 form-group">
-                        <input type="text" class="form-control " value="London, Hamilton street" name="billing" placeholder="Billing address" />
+                    <div class="col form-group">
+                        <input type="hidden" class="form-control" asp-for="PaymentRequest.Currency"
+                            name="PaymentRequest.Currency" placeholder="Currency" />
                     </div>
-                    <div class="col-md-12 form-group">
-                        <input type="text" class="form-control " name="shipping" value="New York, Deer street 23" placeholder="Shipping address" />
+                    <div class="col form-group">
+                        <input type="hidden" class="form-control" asp-for="PaymentRequest.Amount"
+                            name="PaymentRequest.Amount" placeholder="Amount" />
                     </div>
                 </div>
-
-                <div id="payment" class="row">
-                    <div class="col-sm-4 d-flex col-md-6">
-                        <span class="card-label">Card:&nbsp;</span>
-                        <div>
-                            <div id="card-wrapper" class="card-field-wrapper"></div>
-                            <div id="card-errors" class="error-message"></div>
+                } else {
+                <div class="row">
+                    <div class="col form-group">
+                        <select class="custom-select" asp-for="PaymentRequest.Currency" name="PaymentRequest.Currency">
+                            <option selected>Currency</option>
+                            @foreach(var currency in Model.Currencies) {
+                            <option value="@currency.AlphabeticCode">@currency.AlphabeticCode</option>
+                            }
+                        </select>
+                        <!-- <input type="text" class="form-control" asp-for="PaymentRequest.Currency"
+                            name="PaymentRequest.Currency" placeholder="Currency" /> -->
+                    </div>
+                    <div class="col form-group">
+                        <input type="number" class="form-control" asp-for="PaymentRequest.Amount"
+                            name="PaymentRequest.Amount" placeholder="Amount" />
+                    </div>
+                </div>
+                }
+                <hr>
+                <fieldset>
+                    <legend class="mb-2 text-left">BILLING INFO</legend>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <input type="text" class="form-control" asp-for="PaymentRequest.CustomerInfo.FirstName"
+                                name="PaymentRequest.CustomerInfo.FirstName" placeholder="First Name" />
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <input type="text" class="form-control" asp-for="PaymentRequest.CustomerInfo.LastName"
+                                name="PaymentRequest.CustomerInfo.LastName" placeholder="Last Name" />
                         </div>
                     </div>
-                    <div class="col-sm-4 d-flex col-md-4">
-                        <span class="card-label">Exp:&nbsp;</span>
-                        <div>
-                            <div id="expdate-wrapper" class="card-field-wrapper"></div>
-                            <div id="expdate-errors" class="error-message"></div>
+                    <div class="row">
+                        <div class="col form-group">
+                            <input type="text" class="form-control" asp-for="PaymentRequest.CustomerInfo.PhoneNumber"
+                                name="PaymentRequest.CustomerInfo.PhoneNumber" placeholder="Phone Number" />
+                        </div>
+                        <div class="col form-group">
+                            <input type="text" class="form-control" asp-for="PaymentRequest.CustomerInfo.Email"
+                                name="PaymentRequest.CustomerInfo.Email" placeholder="Email Address" />
                         </div>
                     </div>
-                    @if (Model.Channel != "MO")
-                    {
-                        <div id="cvv-holder" class="d-flex col-md-2">
-                            <span class="card-label">Cvv:&nbsp;</span>
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control"
+                                asp-for="PaymentRequest.CustomerInfo.BillingAddress.AddressLine1"
+                                name="PaymentRequest.CustomerInfo.BillingAddress.AddressLine1"
+                                placeholder="Address Line 1" />
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control"
+                                name="PaymentRequest.CustomerInfo.BillingAddress.AddressLine2"
+                                asp-for="PaymentRequest.CustomerInfo.BillingAddress.AddressLine2"
+                                placeholder="Address Line 2" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col form-group">
+                            <input type="text" class="form-control"
+                                asp-for="PaymentRequest.CustomerInfo.BillingAddress.City"
+                                name="PaymentRequest.CustomerInfo.BillingAddress.City" placeholder="City" />
+                        </div>
+                        <div class="col form-group">
+                            <input type="text" class="form-control"
+                                asp-for="PaymentRequest.CustomerInfo.BillingAddress.County"
+                                name="PaymentRequest.CustomerInfo.BillingAddress.County" placeholder="County" />
+                        </div>
+                        <div class="col form-group">
+                            <select class="custom-select" asp-for="PaymentRequest.CustomerInfo.BillingAddress.Country"
+                                name="PaymentRequest.CustomerInfo.BillingAddress.Country">
+                                <option selected>Country</option>
+                                @foreach(var country in Model.IsoCountries) {
+                                <option value="@country.Code">@country.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col form-group">
+                            <input type="text" class="form-control"
+                                name="PaymentRequest.CustomerInfo.BillingAddress.PostalCode"
+                                asp-for="PaymentRequest.CustomerInfo.BillingAddress.PostalCode"
+                                placeholder="Post Code" />
+                        </div>
+                    </div>
+                </fieldset>
+                <hr>
+                <fieldset>
+                    <legend class="mb-2 text-left">PAYMENT INFO</legend>
+                    @if (Model.SavedCards.Count > 0) {
+                    <div class="row">
+                        <div class="col-9 form-group">
+                            <select class="custom-select" id="saved-card" name="PaymentRequest.PaymentMethod.Token">
+                                <option selected>Select a saved card..</option>
+                                @foreach(var card in Model.SavedCards) {
+                                <option value="@card.Token">@card.CardNumber @card.ExpiryDate</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-3 form-group">
+                            <input type="text" class="form-control" name="PaymentRequest.PaymentMethod.Cvv"
+                                id="saved-card-cvv" asp-for="PaymentRequest.PaymentMethod.Cvv" placeholder="CVV" />
+                            <div id="saved-card-cvv-error" class="error-message d-block"></div>
+                        </div>
+                    </div>
+                    }
+                    <div id="payment" class="row">
+                        <div class="d-flex col-6">
+                            <div>
+                                <div id="card-wrapper" class="card-field-wrapper"></div>
+                                <div id="card-errors" class="error-message"></div>
+                            </div>
+                        </div>
+                        <div class="d-flex col">
+                            <div>
+                                <div id="expdate-wrapper" class="card-field-wrapper"></div>
+                                <div id="expdate-errors" class="error-message"></div>
+                            </div>
+                        </div>
+                        @if (Model.PaymentRequest?.Channel != "MO")
+                        {
+                        <div id="cvv-holder" class="d-flex col">
                             <div>
                                 <div id="cvv-wrapper" class="card-field-wrapper"></div>
                                 <div id="cvv-errors" class="error-message"></div>
                             </div>
                         </div>
-                    }
-                </div>
-                <input type="hidden" id="temporaryToken" name="temporaryToken" value="" />
-                <input type="hidden" id="requestId" name="requestId" value="@Model.PaymentRequestId" />
-                <button type="submit" class="btn btn-warning pay" id="pay">Pay now</button>
+                        }
+                        <div class="form-group col mb-0">
+                            <label class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input"
+                                    asp-for="PaymentRequest.PaymentMethod.Persist"
+                                    name="PaymentRequest.PaymentMethod.Persist">
+                                <span class="form-check-label mr-2">
+                                    Save Card
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
 
-            </form>
-        </div>
-        <div class="container-fluid">
-            <div class="test-buttons-container">
-                <button id="test-clear-output">Clear Output</button>
+                    </div>
+                </fieldset>
+                <input type="hidden" id="temporaryToken" name="PaymentRequest.PaymentMethod.Token"
+                    asp-for="PaymentRequest.PaymentMethod.Token" />
+                <input type="hidden" id="channel" name="PaymentRequest.Channel" asp-for="PaymentRequest.Channel" />
+                <input type="hidden" id="paymentRequestId" name="PaymentRequest.PaymentRequestId"
+                    asp-for="PaymentRequest.PaymentRequestId" />
+                <input type="hidden" id="platformId" name="PaymentRequest.PlatformId"
+                    asp-for="PaymentRequest.PlatformId" />
+                <input type="hidden" id="merchantId" name="PaymentRequest.MerchantId"
+                    asp-for="PaymentRequest.MerchantId" />
+                <input type="hidden" id="merchantAccountId" name="PaymentRequest.MerchantAccountId"
+                    asp-for="PaymentRequest.MerchantAccountId" />
             </div>
-            <textarea id="test-output" spellcheck="false">@Model.Error</textarea>
         </div>
-
-
+        <button class="btn btn-primary pay" id="pay">@submit</button>
+        <button type="submit" class="btn btn-warning pay" id="continue" hidden=true>Continue</button>
+    </form>
+</div>
+@if(Model.Error == null){
+<div class="container-fluid pt-5" style="opacity: 0.5;">
+    <div class="test-buttons-container">
+        <button id="test-clear-output" class="btn btn-sm btn-secondary mb-2">Clear Output</button>
+    </div>
+    <div class="row">
+        <div class="col">
+            <textarea id="test-output" name="test-outputs" class="process-result"
+                spellcheck="false">Request:&#13;&#13;@Model.Request</textarea>
+        </div>
+        <div class="col">
+            <textarea id="test-output" name="test-outputs" class="process-result"
+                spellcheck="false">Response:&#13;&#13;@Model.Response</textarea>
+        </div>
     </div>
 </div>
+} else {
+<div class="container-fluid" style="opacity: 0.5;">
+    <div class="test-buttons-container">
+        <button id="test-clear-output" class="btn btn-sm btn-secondary mb-2">Clear Output</button>
+    </div>
+    <textarea id="test-output" name="test-outputs" spellcheck="false">@Model.Error</textarea>
+</div>
+}
 
 <script src="~/js/site.js" asp-append-version="true"></script>
 <script src="@Model.PaymentsLibraryUrl"></script>
 <script>
-    initHostedFields("@Model.FieldToken");
+    initHostedFields("@Model.FieldToken?.FieldNonce");
 </script>

@@ -1,5 +1,18 @@
-﻿.hidden {
+﻿body {
+    background-color: #fefbfb;
+}
+
+.header-title {
+    background-color: #354a5e;
+    color: white;
+}
+
+.hidden {
     display: none !important;
+}
+
+.form-container {
+    max-width: 800px !important;
 }
 
 .container-fluid {
@@ -15,10 +28,13 @@
 }
 
 .card-field-wrapper {
-    height: 22px;
+    height: calc(1.5em + .75rem + 2px);
     margin-top: 8px;
     border-radius: .25rem;
     border: 1px solid #ced4da;
+    padding: .375rem .75rem;
+    margin-bottom: 3px;
+    /* padding-top: 8px !important; */
 }
 
 .card-label {
@@ -41,6 +57,8 @@
     height: 60%;
     min-height: 200px;
     font-family: Consolas, monaco, monospace;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
     font-size: 12px;
 }
 
@@ -57,13 +75,54 @@
 }
 
 .process-result {
-    width: 40%;
+    width: 100%;
     height: 90%;
-    min-height: 600px;
-    border: 1px solid black;
+    min-height: 800px !important;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
     background-color: #EEEEFF;
     overflow: auto;
     padding: 10px;
     font-size: 0.9em;
     font-family: monospace;
+}
+
+.bg-primary {
+    background-color: #2cabe1 !important;
+}
+
+.bg-secondary {
+    background-color: #eaecee !important;
+}
+
+.btn-primary {
+    background-color: #2cabe1 !important;
+    border-color: #2cabe1 !important;
+}
+
+.font-primary {
+    color: #2cabe1 !important;
+}
+
+legend {
+    color: grey;
+    font-size: 1rem !important;
+}
+
+#payment-form {
+    font-size: 0.8rem !important;
+}
+
+.form-control {
+    font-size: 0.8rem !important;
+}
+
+.custom-select {
+    font-size: 0.8rem !important;
+}
+
+.custom-label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: darkgray;
 }

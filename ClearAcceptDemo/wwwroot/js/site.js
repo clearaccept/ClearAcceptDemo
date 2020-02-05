@@ -47,18 +47,48 @@
       }
 
       var payButton = document.getElementById("pay");
+      var continueButton = document.getElementById("continue");
+      var stepThrough = document.getElementById("step-through");
+      var savedCard = document.getElementById("saved-card");
+      var savedCardCvv = document.getElementById("saved-card-cvv");
+      var savedCardCvvError = document.getElementById("saved-card-cvv-error");
+
       payButton.addEventListener("click",
         function (event) {
+          event.preventDefault();          
+          if (savedCard && savedCard.selectedIndex > 0) {
+            console.log(savedCard.options[savedCard.selectedIndex]);
+            if (savedCardCvv && !savedCardCvv.value) {
+              savedCardCvvError.innerHTML = "Cvv is required";
+              return;
+            }
+            document.getElementById("temporaryToken").value = savedCard.options[savedCard.selectedIndex].value;
+            document.getElementById("payment-form").submit();
+            return;
+          }
           hostedFields.tokenize(function (token) {
-            logTestOutput(JSON.stringify(token, null, 2));
+            clearTestOutput();
+            logTestOutput(".tokenize() result: \r\n \r\n" + JSON.stringify(token, null, 2));
             if (token.TokenId) {
               document.getElementById("temporaryToken").value = token.TokenId;
-              document.getElementById("payment-form").submit();
+              payButton.hidden = true;
+              if (!stepThrough.checked) {
+                document.getElementById("payment-form").submit();
+              } else {
+                continueButton.hidden = false;
+              }
             } else {
               logTestOutput("The value received does not contain a valid Token");
               event.preventDefault();
             }
           });
+          event.preventDefault();
+        });
+
+      continueButton.addEventListener("click",
+        function (event) {
+          document.getElementById("payment-form").submit();
+          continueButton.hidden = true;
           event.preventDefault();
         });
     });
@@ -72,8 +102,14 @@ function logTestOutput(output) {
   textarea.scrollTop = textarea.scrollHeight;
 }
 
+function clearTestOutput() {
+  var textareas = document.getElementsByName("test-outputs");
+  textareas.forEach(textarea => {
+    textarea.value = "";
+  });
+}
+
 document.getElementById("test-clear-output").addEventListener("click", function () {
-  var textarea = document.getElementById("test-output");
-  textarea.value = "";
+  clearTestOutput();
 });
 

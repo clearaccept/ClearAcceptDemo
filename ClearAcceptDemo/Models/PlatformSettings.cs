@@ -1,9 +1,9 @@
 namespace ClearAcceptDemo.Models
 {
-    public class PlatformSettings
+    public class Identifiers
     {
         public string PlatformId { get; set; }
-        public string MerchantAccountId { get; set; }
         public string MerchantId { get; set; }
+        public string MerchantAccountId { get; set; }
     }
 }

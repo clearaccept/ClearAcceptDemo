@@ -1,6 +1,6 @@
-namespace ClearAcceptDemo.ClearAcceptApi.Models
+﻿namespace ClearAccept.ApiClient.Models
 {
-    public class FieldToken
+    public class FieldTokenModel
     {
         public string PaymentRequestId { get; set; }
         public string FieldNonce { get; set; }

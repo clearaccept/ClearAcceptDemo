@@ -1,4 +1,4 @@
-namespace ClearAcceptDemo.ClearAcceptApi.Models
+namespace ClearAccept.ApiClient.Models
 {
     public class ServiceConfiguration
     {

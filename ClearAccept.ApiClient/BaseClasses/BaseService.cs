@@ -1,12 +1,12 @@
 using System;
-using ClearAcceptDemo.ClearAcceptApi.Helpers;
-using ClearAcceptDemo.ClearAcceptApi.Models;
-using ClearAcceptDemo.ClearAcceptApi.Services;
+using ClearAccept.ApiClient.Helpers;
+using ClearAccept.ApiClient.Models;
+using ClearAccept.ApiClient.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using RestSharp;
 
-namespace ClearAcceptDemo.ClearAcceptApi.BaseClasses
+namespace ClearAccept.ApiClient.BaseClasses
 {
     public abstract class BaseService : IService
     {

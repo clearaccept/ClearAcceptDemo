@@ -1,4 +1,4 @@
-namespace ClearAcceptDemo.ClearAcceptApi.Helpers
+namespace ClearAccept.ApiClient.Helpers
 {
     public class ApiResponse
     {

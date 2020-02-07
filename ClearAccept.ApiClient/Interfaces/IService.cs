@@ -1,4 +1,4 @@
-namespace ClearAcceptDemo.ClearAcceptApi.BaseClasses
+namespace ClearAccept.ApiClient.BaseClasses
 {
     public interface IService
     {

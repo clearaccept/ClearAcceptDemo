@@ -1,4 +1,4 @@
-namespace ClearAcceptDemo.ClearAcceptApi.Helpers
+namespace ClearAccept.ApiClient.Helpers
 {
     public static class ApiEndpoints
     {
@@ -12,5 +12,6 @@ namespace ClearAcceptDemo.ClearAcceptApi.Helpers
         public static string MerchantsEndpoint => "/merchants";
         public static string AccountsEndpoint => "/merchant-accounts";
         public static string AuthorisationsEndpoint => "/authorisations";
+        public static string TransactionsEndpoint => "/settlements";
     }
 }

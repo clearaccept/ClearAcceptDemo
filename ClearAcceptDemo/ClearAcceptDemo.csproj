@@ -13,7 +13,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />    
   </ItemGroup>  
   <ItemGroup>
-    <ProjectReference Include="..\ClearAcceptDemo.ClearAcceptApi\ClearAcceptDemo.ClearAcceptApi.csproj">
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ClearAccept.ApiClient\ClearAccept.ApiClient.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>

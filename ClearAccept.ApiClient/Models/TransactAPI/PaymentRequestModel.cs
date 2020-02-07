@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace ClearAcceptDemo.ClearAcceptApi.Models
+namespace ClearAccept.ApiClient.Models
 {
-    public class PaymentRequest
+    public class PaymentRequestModel
     {
         public string Token { get; set; }
         public string PaymentRequestId { get; set; }

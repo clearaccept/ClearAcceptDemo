@@ -134,11 +134,14 @@ var submit = Model.PaymentRequest?.Channel == "ECOM" ? "Pay Now" : "Process";
                                 }
                             </select>
                         </div>
+                        @if (Model.PaymentRequest?.Channel != "MO")
+                        {
                         <div class="col-3 form-group">
                             <input type="text" class="form-control" name="PaymentRequest.PaymentMethod.Cvv"
                                 id="saved-card-cvv" asp-for="PaymentRequest.PaymentMethod.Cvv" placeholder="CVV" />
                             <div id="saved-card-cvv-error" class="error-message d-block"></div>
                         </div>
+                        }
                     </div>
                     }
                     <div id="payment" class="row">
@@ -163,7 +166,7 @@ var submit = Model.PaymentRequest?.Channel == "ECOM" ? "Pay Now" : "Process";
                             </div>
                         </div>
                         }
-                        <div class="form-group col mb-0">
+                        <div class="form-group d-flex col">
                             <label class="form-check form-check-inline">
                                 <input type="checkbox" class="form-check-input"
                                     asp-for="PaymentRequest.PaymentMethod.Persist"
@@ -173,9 +176,6 @@ var submit = Model.PaymentRequest?.Channel == "ECOM" ? "Pay Now" : "Process";
                                 </span>
                             </label>
                         </div>
-                    </div>
-                    <div class="row">
-
                     </div>
                 </fieldset>
                 <input type="hidden" id="temporaryToken" name="PaymentRequest.PaymentMethod.Token"

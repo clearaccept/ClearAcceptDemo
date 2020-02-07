@@ -3,7 +3,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using RestSharp;
 
-namespace ClearAcceptDemo.ClearAcceptApi.Helpers
+namespace ClearAccept.ApiClient.Helpers
 {
     public static class RestApiHelper
     {

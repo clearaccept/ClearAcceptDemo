@@ -1,5 +1,5 @@
-﻿using ClearAcceptDemo.ClearAcceptApi.Models;
-using ClearAcceptDemo.ClearAcceptApi.Services;
+﻿using ClearAccept.ApiClient.Models;
+using ClearAccept.ApiClient.Services;
 using ClearAcceptDemo.Models;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
@@ -70,7 +70,7 @@ namespace ClearAcceptDemo.Controllers
                 viewModel.PaymentRequest = _service.PostPaymentRequest(_settings.PaymentRequest);
 
                 // Call POST /field-tokens
-                var fieldToken = new FieldToken
+                var fieldToken = new FieldTokenModel
                 {
                     PaymentRequestId = viewModel.PaymentRequest.PaymentRequestId
                 };

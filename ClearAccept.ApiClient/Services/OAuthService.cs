@@ -1,11 +1,11 @@
 using System;
 using System.Text;
-using ClearAcceptDemo.ClearAcceptApi.Helpers;
-using ClearAcceptDemo.ClearAcceptApi.Models;
+using ClearAccept.ApiClient.Helpers;
+using ClearAccept.ApiClient.Models;
 using Newtonsoft.Json;
 using RestSharp;
 
-namespace ClearAcceptDemo.ClearAcceptApi.Services
+namespace ClearAccept.ApiClient.Services
 {
     public class OAuthService
     {

@@ -57,7 +57,6 @@
         function (event) {
           event.preventDefault();          
           if (savedCard && savedCard.selectedIndex > 0) {
-            console.log(savedCard.options[savedCard.selectedIndex]);
             if (savedCardCvv && !savedCardCvv.value) {
               savedCardCvvError.innerHTML = "Cvv is required";
               return;

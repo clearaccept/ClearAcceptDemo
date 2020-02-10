@@ -35,6 +35,9 @@ namespace ClearAcceptDemo.Controllers
                 Identifiers = customSettings?.Identifiers ?? settings.Value.Identifiers
             };
 
+            // Set the MerchantAccountId on the payment-request body
+            _settings.PaymentRequest.MerchantAccountId = _settings.Identifiers.MerchantAccountId;
+
             _serviceConfiguration = new ServiceConfiguration
             {
                 Authentication = new AuthConfig
@@ -65,7 +68,7 @@ namespace ClearAcceptDemo.Controllers
             {
                 // Set Hosted Fields' script source
                 viewModel.PaymentsLibraryUrl = _settings.HostedFieldsUrl;
-
+               
                 // Call POST /payment-requests
                 viewModel.PaymentRequest = _service.PostPaymentRequest(_settings.PaymentRequest);
 

@@ -3,6 +3,6 @@
     public class FieldTokenModel
     {
         public string PaymentRequestId { get; set; }
-        public string FieldNonce { get; set; }
+        public string FieldToken { get; set; }
     }
 }

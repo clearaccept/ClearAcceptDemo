@@ -54,8 +54,8 @@
       var savedCardCvvError = document.getElementById("saved-card-cvv-error");
 
       payButton.addEventListener("click",
-        function (event) {
-          event.preventDefault();          
+        function(event) {
+          event.preventDefault();
           if (savedCard && savedCard.selectedIndex > 0) {
             if (savedCardCvv && !savedCardCvv.value) {
               savedCardCvvError.innerHTML = "Cvv is required";
@@ -65,7 +65,12 @@
             document.getElementById("payment-form").submit();
             return;
           }
-          hostedFields.tokenize(function (token) {
+          const firstName = document.getElementById("PaymentRequest_CustomerInfo_FirstName").value;
+          const lastName = document.getElementById("PaymentRequest_CustomerInfo_LastName").value;
+          const clientDetails = {
+            accountHolderName: firstName + " " + lastName
+          }
+          hostedFields.tokenize(clientDetails, function (token) {
             clearTestOutput();
             logTestOutput(".tokenize() result: \r\n \r\n" + JSON.stringify(token, null, 2));
             if (token.TokenId) {

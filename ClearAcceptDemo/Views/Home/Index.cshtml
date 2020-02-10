@@ -223,5 +223,5 @@ var submit = Model.PaymentRequest?.Channel == "ECOM" ? "Pay Now" : "Process";
 <script src="~/js/site.js" asp-append-version="true"></script>
 <script src="@Model.PaymentsLibraryUrl"></script>
 <script>
-    initHostedFields("@Model.FieldToken?.FieldNonce");
+    initHostedFields("@Model.FieldToken?.FieldToken");
 </script>

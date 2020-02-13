@@ -147,7 +147,7 @@ namespace ClearAcceptDemo.Controllers
 
                 // Store Permanent Token
                 var approvedAuth = result.Transactions?.FirstOrDefault(i => i.Type == "Authorisation" && (i.Status == "Approved" || i.Status == "Settled"));
-                if (approvedAuth != null && result.Token.Substring(0, 5) == "token")
+                if (approvedAuth != null && result.Token.Substring(0, 8).Contains("perm"))
                 {
                     var savedCards = _memoryCache.Get<List<SavedCard>>("savedCards") ?? new List<SavedCard>();
 

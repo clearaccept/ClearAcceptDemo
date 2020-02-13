@@ -17,7 +17,7 @@ namespace ClearAccept.ApiClient.Models
         public CustomerInfo CustomerInfo { get; set; }
         public PlatformReferences PlatformReferences { get; set; }
         public MerchantReferences MerchantReferences { get; set; }
-        public ThreeDSecureInfo ThreeDSecureInfo { get; set; }
+        public ThreeDSecure Threeds { get; set; }
         public List<Transaction> Transactions { get; set; }
     }
 
@@ -62,10 +62,15 @@ namespace ClearAccept.ApiClient.Models
         public string TransactionReference { get; set; }
     }
 
-    public class ThreeDSecureInfo
+    public class ThreeDSecure
     {
-        public string ThreeDSecureEci { get; set; }
-        public string LiabilityShift { get; set; }
+        public string Eci { get; set; }
+        public string ThreedsStatus { get; set; }
+        public string Enrolled { get; set; }
+        public string ThreedsStatusReason { get; set; }
+        public string ThreedsId { get; set; }
+        public string LiabilityShiftStatus { get; set; }
+        public string Version { get; set; }
     }
 
     public class Transaction
@@ -88,6 +93,6 @@ namespace ClearAccept.ApiClient.Models
         public string Channel { get; set; }
         public string DeclinedBy { get; set; }
         public string DeclineReason { get; set; }        
-        public ThreeDSecureInfo ThreeDSecureInfo { get; set; }
+        public ThreeDSecure Threeds { get; set; }
     }
 }

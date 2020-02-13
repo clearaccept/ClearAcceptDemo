@@ -127,7 +127,7 @@ var submit = Model.PaymentRequest?.Channel == "ECOM" ? "Pay Now" : "Process";
                     @if (Model.SavedCards.Count > 0) {
                     <div class="row">
                         <div class="col-9 form-group">
-                            <select class="custom-select" id="saved-card" name="PaymentRequest.PaymentMethod.Token">
+                            <select class="custom-select" id="saved-card">
                                 <option selected>Select a saved card..</option>
                                 @foreach(var card in Model.SavedCards) {
                                 <option value="@card.Token">@card.CardNumber @card.ExpiryDate</option>

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 using RestSharp;
+using RestSharp.Serializers.NewtonsoftJson;
 
 namespace ClearAccept.ApiClient.Helpers
 {
@@ -10,6 +11,13 @@ namespace ClearAccept.ApiClient.Helpers
         public static RestClient CreateAuthenticatedRestClient(string url)
         {
             var restClient = new RestClient(url);
+
+            var jsonSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            };
+
+            restClient.UseNewtonsoftJson(jsonSettings);
             return restClient;
         }
 
@@ -45,15 +53,9 @@ namespace ClearAccept.ApiClient.Helpers
 
                     // If the HTTP status code is in the 400 range, attempt to include actual error messge
                     if ((int)response.StatusCode < 400 || (int)response.StatusCode >= 500) continue;
-                    try
-                    {
-                        var errorResult = response.Content;
-                        errorMessage += $", Message: {errorResult}";
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
+                    var errorResult = response.Content;
+                    errorMessage += $", Message: {errorResult}";
+                    break;
                 }
                 catch (Exception ex)
                 {

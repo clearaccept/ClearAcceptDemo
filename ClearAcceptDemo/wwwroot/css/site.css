@@ -1,9 +1,14 @@
-﻿body {
+﻿:root {
+    --ca-blue: #2cabe1;
+    --ca-gray: #354a5e; 
+  }
+
+body {
     background-color: #fefbfb;
 }
 
 .header-title {
-    background-color: #354a5e;
+    background-color: var(--ca-gray);
     color: white;
 }
 
@@ -15,11 +20,6 @@
     max-width: 800px !important;
 }
 
-.container-fluid {
-    text-align: center;
-    padding-top: 100px;
-}
-
 .title {
     font-size: 60px;
     font-family: Arial;
@@ -29,26 +29,7 @@
 
 .card-field-wrapper {
     height: calc(1.5em + .75rem + 2px);
-    margin-top: 8px;
-    border-radius: .25rem;
-    border: 1px solid #ced4da;
-    padding: .375rem .75rem;
-    margin-bottom: 3px;
-    /* padding-top: 8px !important; */
-}
-
-.card-label {
-    margin-top: 7px;
-    font-size: 14px
-}
-
-#payment {
-    min-height: 80px;
-}
-
-.pay {
-    border-radius: 25px;
-    color: #ffffff;
+    margin:0px;
 }
 
 #test-output {
@@ -60,12 +41,6 @@
     border: 1px solid #ced4da;
     border-radius: .25rem;
     font-size: 12px;
-}
-
-.test-buttons-container button {
-    font-family: Consolas, monaco, monospace;
-    font-size: 12px;
-    font-weight: bold;
 }
 
 .error-message {
@@ -88,7 +63,7 @@
 }
 
 .bg-primary {
-    background-color: #2cabe1 !important;
+    background-color: var(--ca-blue) !important;
 }
 
 .bg-secondary {
@@ -96,12 +71,12 @@
 }
 
 .btn-primary {
-    background-color: #2cabe1 !important;
-    border-color: #2cabe1 !important;
+    background-color: var(--ca-blue) !important;
+    border-color: var(--ca-blue) !important;
 }
 
 .font-primary {
-    color: #2cabe1 !important;
+    color: var(--ca-blue) !important;
 }
 
 legend {
@@ -121,8 +96,40 @@ legend {
     font-size: 0.8rem !important;
 }
 
-.custom-label {
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: darkgray;
+.inactive {
+    pointer-events: none;
+    opacity: .1;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    display: block;
+    color: #ffffff;
+}
+
+.spinner:after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    border: 2px solid currentColor;
+    border-bottom-color: transparent;
+    border-radius: 100%;
+    background: transparent;
+    animation: spinner-rotate 1s infinite linear;
+}
+
+@keyframes spinner-rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.custom-control-input:checked~.custom-control-label::before {
+    border-color: var(--ca-blue);
+    background-color: var(--ca-blue);
 }

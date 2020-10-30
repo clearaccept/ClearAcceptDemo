@@ -4,15 +4,22 @@ ViewData["Title"] = "ClearAccept Demo";
 ViewData["Subtitle"] = "Confirm PaymentRequest";
 }
 
-<div class="row mt-3">
-    <a href="~/"><i class="fa fa-backward font-primary"></i></a>
+<div class="row mt-2">
+    <div class="col">
+        <a href="~/">
+            <button type="submit" class="btn btn-sm btn-primary text-white">
+                <span id="pay-text">Back</span>
+            </button>
+        </a>
+    </div>
 </div>
 
 <hr />
 <h8>@Model.Result</h8>
 <hr />
 
-<div class="container-fluid pt-5">
+<!-- Output to demo the calls made to ClearAccept from the backend -->
+<div class="container-fluid pt-4">
     <div class="row">
         <div class="col">
             <textarea class="process-result" spellcheck="false">Request:&#13;&#13;@Model.Request</textarea>

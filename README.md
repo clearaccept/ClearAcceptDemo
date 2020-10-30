@@ -1,7 +1,7 @@
-﻿# Clear Accept Hosted Fields Demo
+﻿# ClearAccept Hosted Fields Demo
 
 ## The goal of this demo
-This demo project was created as an integration example for the Clear Accept Hosted Fields library.
+This is an example of how the ClearAccept Hosted Fields can be integrated into a web application.
 
 ## Steps to run the application
 
@@ -29,21 +29,25 @@ dotnet run
 
 
 ## About the Demo Project
+The Hosted Fields library imported from https://sandbox-hosted.clearaccept.systems/fields/v1 will inject iframes into the wrappers provided.
+These iframes will contain the Card Number, Card Expiry Date and CVV fields hosted by ClearAccept, ensuring that sensitive card data is collected directly from the card holder.
+
+Upon starting this application the following are executed:
+1. A PaymentRequest is created by calling TransactAPI from the backend
+2. The PaymentRequestId from the response in (1) is exchanged for a FieldToken with TransactAPI
+3. The FieldToken is then passed to the View where the HostedFields library is imported
+4. The HostedFields are initialsied using the FieldToken and other settings
+5. The fields are now displayed to the customer
+
 ![Demo Project](docs/images/demo-project.png)
 
-This demo platform contains some default fields that contain non sensitive data which are on the demo platform host,
-and the 3 fields (Card, Expiration date, Cvv) in 3 different iframes. These three fields will contain 
-sensitive data, so the content of the iframes are hosted on https://sandboxm-hosted.clearcourse.systems/ and the platform
-itself cannot access the data inside of them.
-You can test it by filling the input fields with valid data and clicking on the 'Pay now' button, and you will
-be redirected to the result page.
+To process a payment:
+1. User populates the form with valid data
+2. User clicks to pay
+3. If the user chose to pay using a saved card, the PaymentRequest is updated with the associated PermanentToken
+4. The tokenize method is called on the HostedFields instance
+5. A TemporaryToken or CvvToken (if paying with a saved card) is returned by HostedFields
+6. The token is passed to the backend where it is used to confirm the PaymentRequest
+7. The results are displayed to the user
 
 ![Result Page](docs/images/result-page.png)
-
-On the results page, the STATUS indicator shows the status of the payment request
-created with the data you entered previously. This page also contains two text areas to allow you
-to view the request and response from the payments gateway.
-
-To start a new payment click on 'start new payment' and you will  be redirected to the payment form 
-on the main page. 
-

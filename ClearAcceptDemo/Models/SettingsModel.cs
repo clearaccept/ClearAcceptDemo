@@ -8,7 +8,7 @@ namespace ClearAcceptDemo.Models
         public string HostedFieldsUrl { get; set; }        
         public string TransactUrl { get; set; }
         public Credentials TransactCredentials { get; set; }
-        public PaymentRequestModel PaymentRequest { get; set; }
+        public PaymentRequest PaymentRequest { get; set; }
         public Identifiers Identifiers { get; set; }
     }
 }
